@@ -23,7 +23,7 @@ jobs:
         yarn install
     - name: Production Build
       env:
-        REACT_APP_JS_CHESS_API: http://nadsenyvyvojar.cz/
+        REACT_APP_JS_CHESS_API: http://3.121.42.150/
       run: |
         yarn build
     - name: Deploy to S3
