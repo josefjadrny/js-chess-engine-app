@@ -19,11 +19,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: Yarn Install
-      env:
-        REACT_APP_JS_CHESS_API: http://nadsenyvyvojar.cz/
       run: |
         yarn install
     - name: Production Build
+      env:
+        REACT_APP_JS_CHESS_API: http://nadsenyvyvojar.cz/
       run: |
         yarn build
     - name: Deploy to S3
