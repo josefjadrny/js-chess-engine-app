@@ -7,11 +7,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         node-version: [12.x]
-        
+
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js ${{ matrix.node-version }}
@@ -19,6 +19,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: Yarn Install
+      env:
+        REACT_APP_JS_CHESS_API: http://nadsenyvyvojar.cz/
       run: |
         yarn install
     - name: Production Build
