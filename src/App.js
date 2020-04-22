@@ -9,6 +9,7 @@ function App() {
 
     useEffect(() => {
         getMoves(chess).then(moves => setChess(Object.assign({}, chess, { moves })))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chess.turn])
 
     return (
@@ -20,7 +21,7 @@ function App() {
     function getBoard() {
         const fields = []
         Object.assign([], ROWS).reverse().map(row => {
-            COLUMNS.map(column => {
+            return COLUMNS.map(column => {
                 const location = `${column}${row}`
                 return fields.push(<Field
                     location={location}
