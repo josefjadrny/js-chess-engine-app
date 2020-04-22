@@ -1,0 +1,83 @@
+.board {
+  display: -ms-grid;
+  -ms-grid-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  -ms-grid-rows: auto;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: auto;
+}
+.board .field {
+  display: block;
+  padding-top: 100%;
+  background-size: 100% 100%;
+  background-repeat:no-repeat;
+}
+.board .field:hover {
+  -webkit-box-shadow:inset 0px 0px 0px 3px #3366CC;
+  -moz-box-shadow:inset 0px 0px 0px 3px #3366CC;
+  box-shadow:inset 0px 0px 0px 3px #3366CC;
+}
+.board .moveFrom {
+  -webkit-box-shadow:inset 0px 0px 0px 3px #3366CC;
+  -moz-box-shadow:inset 0px 0px 0px 3px #3366CC;
+  box-shadow:inset 0px 0px 0px 3px #3366CC;
+}
+.board .moveTo {
+  -webkit-box-shadow:inset 0px 0px 0px 2px #33CC33;
+  -moz-box-shadow:inset 0px 0px 0px 2px #33CC33;
+  box-shadow:inset 0px 0px 0px 2px #33CC33;
+}
+.board .pieceP {
+  background-image: url(./img/pawn_white.png);
+}
+.board .pieceK {
+  background-image: url(./img/king_white.png);
+}
+.board .pieceQ {
+  background-image: url(./img/queen_white.png);
+}
+.board .pieceR {
+  background-image: url(./img/rook_white.png);
+}
+.board .pieceB {
+  background-image: url(./img/bishop_white.png);
+}
+.board .pieceN {
+  background-image: url(./img/knight_white.png);
+}
+.board .piecep {
+  background-image: url(./img/pawn_black.png);
+}
+.board .piecek {
+  background-image: url(./img/king_black.png);
+}
+.board .pieceq {
+  background-image: url(./img/queen_black.png);
+}
+.board .piecer {
+  background-image: url(./img/rook_black.png);
+}
+.board .pieceb {
+  background-image: url(./img/bishop_black.png);
+}
+.board .piecen {
+  background-image: url(./img/knight_black.png);
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  background-color: #212121;
+}
+body .board {
+  max-width: 570px;
+  margin: 30px auto;
+  box-sizing: border-box;
+  border: 10px solid #999999;
+}
+body .field {
+  background-color: #cccccc;
+}
+body .field:nth-of-type(-2n+8), body .field:nth-of-type(8) ~ *:nth-of-type(-2n+15), body .field:nth-of-type(16) ~ *:nth-of-type(-2n+24), body .field:nth-of-type(24) ~ *:nth-of-type(-2n+31), body .field:nth-of-type(32) ~ *:nth-of-type(-2n+40), body .field:nth-of-type(40) ~ *:nth-of-type(-2n+47), body .field:nth-of-type(48) ~ *:nth-of-type(-2n+56), body .field:nth-of-type(56) ~ *:nth-of-type(-2n+63) {
+  background-color: #666666;
+}
