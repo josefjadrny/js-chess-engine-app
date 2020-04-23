@@ -1,20 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import Field from './Field';
+import RightColumn from './RightColumn.js';
 import { NEW_GAME_BOARD_CONFIG, ROWS, COLUMNS, COLORS } from './const/board'
 import './App.css';
 
 function App() {
-    const [chess, setChess] = useState(NEW_GAME_BOARD_CONFIG)
+    const [chess, setChess] = useState(Object.assign({}, NEW_GAME_BOARD_CONFIG))
     const board = getBoard()
 
     useEffect(() => {
         getMoves(chess).then(moves => setChess(Object.assign({}, chess, { moves })))
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chess.turn])
+    }, [chess.pieces])
 
     return (
-        <div className="board">
-            {board}
+        <div className="js_chess">
+            <div className="column column_left">
+                <div className="board">
+                    {board}
+                </div>
+            </div>
+            <div className="column column_right">
+                <div className="menu">
+                    <RightColumn chess={chess} onClick={() => handleNewGameClick() }/>
+                </div>
+            </div>
         </div>
     )
 
@@ -47,11 +57,16 @@ function App() {
                 { pieces: newPieces },
                 { turn: chess.turn === COLORS.WHITE ? COLORS.BLACK : COLORS.WHITE }
             ))
+            chess.history.push(`${chess.move.from}-${field}`)
         } else if (chess.moves[field]) {
             setChess(Object.assign({}, chess, { move:{ from: field }}))
         } else {
             setChess(Object.assign({}, chess, { move:{ from: null }}))
         }
+    }
+
+    function handleNewGameClick() {
+        setChess(Object.assign({}, NEW_GAME_BOARD_CONFIG))
     }
 
     async function getMoves(chess) {

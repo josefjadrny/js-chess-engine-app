@@ -1,3 +1,28 @@
+.js_chess {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+@media all and (max-width: 959px) {
+    .js_chess {
+    flex-direction: column;
+  }
+}
+.column {
+  display: flex;
+  padding: 10px;
+}
+
+.column_left {
+  flex: 2;
+}
+.column_right {
+  flex: 1;
+}
+.menu {
+  margin: 0 auto;
+  width: 90%;
+}
 .board {
   display: -ms-grid;
   -ms-grid-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -5,6 +30,10 @@
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: auto;
+  border: 10px solid #999999;
+  width: 90%;
+  margin: 0 auto;
+  max-width: 700px;
 }
 .board .field {
   display: block;
@@ -69,15 +98,32 @@ body {
   margin: 0;
   background-color: #212121;
 }
-body .board {
-  max-width: 570px;
-  margin: 30px auto;
-  box-sizing: border-box;
-  border: 10px solid #999999;
-}
 body .field {
   background-color: #cccccc;
 }
 body .field:nth-of-type(-2n+8), body .field:nth-of-type(8) ~ *:nth-of-type(-2n+15), body .field:nth-of-type(16) ~ *:nth-of-type(-2n+24), body .field:nth-of-type(24) ~ *:nth-of-type(-2n+31), body .field:nth-of-type(32) ~ *:nth-of-type(-2n+40), body .field:nth-of-type(40) ~ *:nth-of-type(-2n+47), body .field:nth-of-type(48) ~ *:nth-of-type(-2n+56), body .field:nth-of-type(56) ~ *:nth-of-type(-2n+63) {
   background-color: #666666;
+}
+button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  width: 100%;
+}
+button:hover {
+  background-color: #006400;
+}
+.history {
+  background-color: #f0f7fb;
+  line-height: 18px;
+  overflow: hidden;
+  margin: 10px 0px 10px 0px;
+  min-height: 100px;
+  text-align: center;
+  padding: 5px;
 }
