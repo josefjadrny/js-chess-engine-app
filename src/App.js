@@ -3,21 +3,35 @@ import Field from './Field';
 import RightColumn from './RightColumn.js';
 import { NEW_GAME_BOARD_CONFIG, ROWS, COLUMNS, COLORS } from './const/board'
 import './App.css';
+const API_URIS = {
+    MOVES: 'moves',
+    STATUS: 'status',
+}
 
 function App() {
     const [chess, setChess] = useState(Object.assign({}, NEW_GAME_BOARD_CONFIG))
     const board = getBoard()
 
     useEffect(() => {
-        getMoves(chess).then(moves => setChess(Object.assign({}, chess, { moves })))
+        async function fetchData () {
+            const moves = await sendRequest(API_URIS.MOVES)
+            setChess(Object.assign({}, chess, { moves }))
+            if (!Object.keys(moves).length) {
+                const status = await sendRequest(API_URIS.STATUS)
+                setChess(Object.assign({}, chess, { status }))
+            }
+        }
+        fetchData()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chess.pieces])
 
     return (
         <div className="js_chess">
             <div className="column column_left">
-                <div className="board">
-                    {board}
+                <div className="overlay">
+                    <div className="board" disabled={chess.status.isFinished}>
+                        {board}
+                    </div>
                 </div>
             </div>
             <div className="column column_right">
@@ -69,9 +83,9 @@ function App() {
         setChess(Object.assign({}, NEW_GAME_BOARD_CONFIG))
     }
 
-    async function getMoves(chess) {
+    async function sendRequest(url) {
         const res = await fetch(
-            `${process.env.REACT_APP_JS_CHESS_API}moves`,
+            `${process.env.REACT_APP_JS_CHESS_API}${url}`,
             { method: 'POST', body: JSON.stringify(chess), headers: { 'Content-Type': 'application/json' }}
         )
         return res.json().then(res => {return res})

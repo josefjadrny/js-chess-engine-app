@@ -43,5 +43,6 @@ export const NEW_GAME_BOARD_CONFIG = {
     moves: {},
     move: {},
     history: [],
+    status: {}
 }
 
