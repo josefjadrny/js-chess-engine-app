@@ -9,7 +9,7 @@ function Field(props) {
 
     const piece = chess.pieces[location] || ''
     const moveFromClass = chess.move.from === location ? 'moveFrom' : ''
-    const moveToClass = chess.move.from && chess.moves[chess.move.from].includes(location) ? 'moveTo' : ''
+    const moveToClass = chess.move.from && chess.moves && chess.moves[chess.move.from].includes(location) ? 'moveTo' : ''
 
     return (
         <div className={`field piece${piece} ${moveFromClass} ${moveToClass}`} onClick={onClick}>

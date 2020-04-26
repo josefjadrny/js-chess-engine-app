@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Field from './Field';
 import RightColumn from './RightColumn.js';
-import { NEW_GAME_BOARD_CONFIG, ROWS, COLUMNS, COLORS } from './const/board'
+import { NEW_GAME_BOARD_CONFIG, ROWS, COLUMNS } from './const/board'
 import './App.css';
 const API_URIS = {
     MOVES: 'moves',
     STATUS: 'status',
+    MOVE: 'move'
 }
 
 function App() {
@@ -16,20 +17,16 @@ function App() {
         async function fetchData () {
             const moves = await sendRequest(API_URIS.MOVES)
             setChess(Object.assign({}, chess, { moves }))
-            if (!Object.keys(moves).length) {
-                const status = await sendRequest(API_URIS.STATUS)
-                setChess(Object.assign({}, chess, { status }))
-            }
         }
         fetchData()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chess.pieces])
+    }, [])
 
     return (
         <div className="js_chess">
             <div className="column column_left">
                 <div className="overlay">
-                    <div className="board" disabled={chess.status.isFinished}>
+                    <div className="board" disabled={chess.isFinished}>
                         {board}
                     </div>
                 </div>
@@ -58,20 +55,11 @@ function App() {
         return fields
     }
 
-    function handleFieldClick(field) {
+    async function handleFieldClick(field) {
         if (chess.move.from && chess.moves[chess.move.from].includes(field)) {
-            const newPieces = Object.assign({}, chess.pieces,
-                {[field]: chess.pieces[chess.move.from]},
-                {[chess.move.from]:null},
-            )
-            setChess(Object.assign(
-                {},
-                chess,
-                { move:{ from: null }},
-                { pieces: newPieces },
-                { turn: chess.turn === COLORS.WHITE ? COLORS.BLACK : COLORS.WHITE }
-            ))
+            chess.move.to = field
             chess.history.push(`${chess.move.from}-${field}`)
+            setChess(Object.assign({},  chess, {move: {} }, await sendRequest(API_URIS.MOVE)))
         } else if (chess.moves[field]) {
             setChess(Object.assign({}, chess, { move:{ from: field }}))
         } else {
