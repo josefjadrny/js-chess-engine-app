@@ -10,15 +10,11 @@ const API_URIS = {
 }
 
 function App() {
-    const [chess, setChess] = useState(Object.assign({}, NEW_GAME_BOARD_CONFIG))
+    const [chess, setChess] = useState({ ...NEW_GAME_BOARD_CONFIG })
     const board = getBoard()
 
     useEffect(() => {
-        async function fetchData () {
-            const moves = await sendRequest(API_URIS.MOVES)
-            setChess(Object.assign({}, chess, { moves }))
-        }
-        fetchData()
+        getMoves()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -67,8 +63,15 @@ function App() {
         }
     }
 
-    function handleNewGameClick() {
-        setChess(Object.assign({}, NEW_GAME_BOARD_CONFIG))
+    async function getMoves () {
+        const moves = await sendRequest(API_URIS.MOVES)
+        setChess(Object.assign({}, chess, { moves }))
+    }
+
+    async function handleNewGameClick() {
+        await setChess(Object.assign(chess, {pieces: {}}, NEW_GAME_BOARD_CONFIG))
+        chess.history.push(`NEW`)
+        await getMoves()
     }
 
     async function sendRequest(url) {
