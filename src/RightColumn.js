@@ -12,7 +12,9 @@ function RightColumn(props) {
             <button disabled={!chess.history.length} onClick={onClick}><b>NEW GAME</b></button>
             <div className="history">
                 <b>HISTORY</b><br />
-                {chess.history.join(' ; ')}
+                {chess.history.map(record => {
+                    return ` ${record.from}-${record.to} `
+                })}
             </div>
         </div>
     )

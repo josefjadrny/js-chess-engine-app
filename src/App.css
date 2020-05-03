@@ -60,6 +60,11 @@
   -moz-box-shadow:inset 0px 0px 0px 2px #33CC33;
   box-shadow:inset 0px 0px 0px 2px #33CC33;
 }
+.board .lastMove {
+  -webkit-box-shadow:inset 0px 0px 0px 2px #FF0033;
+  -moz-box-shadow:inset 0px 0px 0px 2px #FF0033;
+  box-shadow:inset 0px 0px 0px 2px #FF0033;
+}
 .board .pieceP {
   background-image: url(./img/pawn_white.png);
 }

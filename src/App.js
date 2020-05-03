@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Field from './Field';
 import RightColumn from './RightColumn.js';
-import { NEW_GAME_BOARD_CONFIG, ROWS, COLUMNS } from './const/board'
+import {NEW_GAME_BOARD_CONFIG, ROWS, COLUMNS, COLORS} from './const/board'
 import './App.css';
 const API_URIS = {
     MOVES: 'moves',
     STATUS: 'status',
-    MOVE: 'move'
+    MOVE: 'move',
+    AI_MOVE: 'aimove'
 }
 
 function App() {
@@ -17,6 +18,13 @@ function App() {
         getMoves()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    useEffect(() => {
+        if (chess.turn === COLORS.BLACK) {
+            aiMove()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chess.turn])
 
     return (
         <div className="js_chess">
@@ -53,14 +61,26 @@ function App() {
 
     async function handleFieldClick(field) {
         if (chess.move.from && chess.moves[chess.move.from].includes(field)) {
-            chess.move.to = field
-            chess.history.push(`${chess.move.from}-${field}`)
-            setChess(Object.assign({},  chess, {move: {} }, await sendRequest(API_URIS.MOVE)))
+            return performMove(chess.move.from, field)
         } else if (chess.moves[field]) {
             setChess(Object.assign({}, chess, { move:{ from: field }}))
         } else {
             setChess(Object.assign({}, chess, { move:{ from: null }}))
         }
+    }
+
+    async function performMove (from, to) {
+        chess.history.push({ from, to })
+        chess.move.from = from
+        chess.move.to = to
+        setChess(Object.assign({},  chess, { move: {} }, await sendRequest(API_URIS.MOVE) ))
+    }
+
+    async function aiMove() {
+        const aiMove = await sendRequest(API_URIS.AI_MOVE)
+        const from = Object.keys(aiMove)[0]
+        const to = Object.values(aiMove)[0]
+        return await performMove(from, to)
     }
 
     async function getMoves () {
@@ -70,7 +90,6 @@ function App() {
 
     async function handleNewGameClick() {
         await setChess(Object.assign(chess, {pieces: {}}, NEW_GAME_BOARD_CONFIG))
-        chess.history.push(`NEW`)
         await getMoves()
     }
 
