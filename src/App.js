@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Field from './Field';
 import RightColumn from './RightColumn.js';
-import {NEW_GAME_BOARD_CONFIG, ROWS, COLUMNS, COLORS} from './const/board'
+import {NEW_GAME_BOARD_CONFIG, ROWS, COLUMNS, COLORS, SETTINGS} from './const/board'
 import './App.css';
 const API_URIS = {
     MOVES: 'moves',
@@ -12,6 +12,7 @@ const API_URIS = {
 
 function App() {
     const [chess, setChess] = useState({ ...NEW_GAME_BOARD_CONFIG })
+    const [settings, setSettings] = useState({ ...SETTINGS })
     const board = getBoard()
 
     useEffect(() => {
@@ -37,7 +38,11 @@ function App() {
             </div>
             <div className="column column_right">
                 <div className="menu">
-                    <RightColumn chess={chess} onClick={() => handleNewGameClick() }/>
+                    <RightColumn chess={chess}
+                                 settings={settings}
+                                 onNewGameClick={() => handleNewGameClick() }
+                                 onComputerLevelClick={handleChangeComputerLevelClick}
+                    />
                 </div>
             </div>
         </div>
@@ -77,7 +82,7 @@ function App() {
     }
 
     async function aiMove() {
-        const aiMove = await sendRequest(API_URIS.AI_MOVE)
+        const aiMove = await sendRequest(`${API_URIS.AI_MOVE}?level=${settings.computerLevel}`)
         const from = Object.keys(aiMove)[0]
         const to = Object.values(aiMove)[0]
         return await performMove(from, to)
@@ -99,6 +104,10 @@ function App() {
             { method: 'POST', body: JSON.stringify(chess), headers: { 'Content-Type': 'application/json' }}
         )
         return res.json().then(res => {return res})
+    }
+
+    async function handleChangeComputerLevelClick(level) {
+        await setSettings({computerLevel: level})
     }
 }
 

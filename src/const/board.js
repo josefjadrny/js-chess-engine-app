@@ -4,6 +4,14 @@ export const COLORS = {
     BLACK: 'black',
     WHITE: 'white'
 }
+export const COMPUTER_LEVELS = {
+    "Monkey": 0,
+    "Beginner": 1,
+    "Advanced": 2,
+}
+export const SETTINGS = {
+    computerLevel: COMPUTER_LEVELS.Advanced
+}
 export const NEW_GAME_BOARD_CONFIG = {
     turn: COLORS.WHITE,
     pieces: {
