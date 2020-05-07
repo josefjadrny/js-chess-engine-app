@@ -154,6 +154,7 @@ button:disabled {
   min-height: 100px;
   text-align: center;
   padding: 5px;
+  color: #666666;
 }
 /* Customize the label (the level_wrapper) */
 .level_wrapper {
