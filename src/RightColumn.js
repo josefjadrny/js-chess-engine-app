@@ -33,6 +33,12 @@ function RightColumn(props) {
                             </label>
                 })}
             </div>
+            <div id="copyright">
+                <p>
+                    This web site is using an open-source
+                    &nbsp;<a href="https://www.npmjs.com/package/js-chess-engine" target="_blank"  rel="noopener noreferrer">js-chess-engine</a>.
+                </p>
+            </div>
         </div>
     )
 }

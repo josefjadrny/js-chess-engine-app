@@ -122,6 +122,13 @@ body {
   font-size: 20px;
   color: #cccccc;
 }
+a:visited{
+  color: #4CAF50;;
+}
+a:link{
+  color: #4CAF50;;
+}
+
 body .field {
   background-color: #cccccc;
 }
@@ -155,6 +162,10 @@ button:disabled {
   text-align: center;
   padding: 5px;
   color: #666666;
+}
+.menu #copyright {
+  margin-top: 50px;
+  text-align: center;
 }
 /* Customize the label (the level_wrapper) */
 .level_wrapper {
