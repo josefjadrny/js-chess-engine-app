@@ -23,7 +23,8 @@ jobs:
         yarn install
     - name: Production Build
       env:
-        REACT_APP_JS_CHESS_API: http://18.156.182.194:8000/
+        REACT_APP_JS_CHESS_API: ${{ secrets.REACT_APP_JS_CHESS_API }}
+        REACT_APP_ANALYTICS_CODE: ${{ secrets.REACT_APP_ANALYTICS_CODE }}
       run: |
         yarn build
     - name: Deploy to S3

@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import Field from './Field';
-import RightColumn from './RightColumn.js';
+import RightColumn from './RightColumn.js'
 import {NEW_GAME_BOARD_CONFIG, ROWS, COLUMNS, COLORS, SETTINGS} from './const/board'
-import './App.css';
+import ReactGA from 'react-ga';
+import './App.css'
 const API_URIS = {
     MOVES: 'moves',
     STATUS: 'status',
     MOVE: 'move',
     AI_MOVE: 'aimove'
 }
+
+ReactGA.initialize(process.env.REACT_APP_ANALYTICS_CODE)
+ReactGA.pageview(window.location.pathname + window.location.search)
 
 function App() {
     const [chess, setChess] = useState({ ...NEW_GAME_BOARD_CONFIG })
