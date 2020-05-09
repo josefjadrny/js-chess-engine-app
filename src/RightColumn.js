@@ -5,13 +5,17 @@ function RightColumn(props) {
     const {
         onNewGameClick,
         onComputerLevelClick,
+        onConfirmationToggleClick,
+        onConfirmationClick,
         chess,
         settings,
     } = props
 
     return (
         <div>
-            <button disabled={!chess.history.length} onClick={onNewGameClick}><b>NEW GAME</b></button>
+            <div id="new_game">
+                <button disabled={!chess.history.length} onClick={onNewGameClick}><b>NEW GAME</b></button>
+            </div>
             <div id="history">
                 <b>HISTORY</b><br/>
                 {chess.history.map(record => {
@@ -32,6 +36,22 @@ function RightColumn(props) {
                             <span className="checkmark"></span>
                             </label>
                 })}
+            </div>
+            <div id="confirmation">
+                <p><b>Move confirmation</b></p>
+                <label className="switch">
+                    <input
+                        type="checkbox"
+                        checked={settings.confirmation ? 'checked' : '' }
+                        onChange={onConfirmationToggleClick}
+                    />
+                        <span className="slider round"></span>
+                </label>
+                {settings.confirmation ?
+                    <p><button onClick={onConfirmationClick} disabled={!(chess.move.from && chess.move.to)}><b>&#10004;</b></button></p> :
+                    ''
+                }
+
             </div>
             <div id="copyright">
                 <p>

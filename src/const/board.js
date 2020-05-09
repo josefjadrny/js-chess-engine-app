@@ -10,7 +10,8 @@ export const COMPUTER_LEVELS = {
     "Advanced": 2,
 }
 export const SETTINGS = {
-    computerLevel: COMPUTER_LEVELS.Advanced
+    computerLevel: COMPUTER_LEVELS.Advanced,
+    confirmation: false,
 }
 export const NEW_GAME_BOARD_CONFIG = {
     turn: COLORS.WHITE,

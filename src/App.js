@@ -42,6 +42,8 @@ function App() {
                                  settings={settings}
                                  onNewGameClick={() => handleNewGameClick() }
                                  onComputerLevelClick={handleChangeComputerLevelClick}
+                                 onConfirmationToggleClick={() => handleChangeConfirmationToggleClick() }
+                                 onConfirmationClick={() => handleChangeConfirmationClick() }
                     />
                 </div>
             </div>
@@ -58,6 +60,7 @@ function App() {
                     key={`field-${location}`}
                     onClick={() => handleFieldClick(location) }
                     chess={chess}
+                    settings={settings}
                 />)
             })
         })
@@ -66,7 +69,13 @@ function App() {
 
     async function handleFieldClick(field) {
         if (chess.move.from && chess.moves[chess.move.from].includes(field)) {
-            return performMove(chess.move.from, field)
+            chess.move.to = field
+            await setChess({...chess})
+            if (settings.confirmation) {
+
+            } else {
+                return performMove(chess.move.from, chess.move.to)
+            }
         } else if (chess.moves[field]) {
             setChess(Object.assign({}, chess, { move:{ from: field }}))
         } else {
@@ -107,7 +116,15 @@ function App() {
     }
 
     async function handleChangeComputerLevelClick(level) {
-        await setSettings({computerLevel: level})
+        await setSettings(Object.assign({}, settings, {computerLevel: level}))
+    }
+
+    async function handleChangeConfirmationToggleClick() {
+        await setSettings(Object.assign({}, settings,{confirmation: settings.confirmation ? false : true}))
+    }
+
+    async function handleChangeConfirmationClick() {
+        return performMove(chess.move.from, chess.move.to)
     }
 }
 
