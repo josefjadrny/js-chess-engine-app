@@ -17,6 +17,7 @@ ReactGA.pageview(window.location.pathname + window.location.search)
 function App() {
     const [chess, setChess] = useState({ ...NEW_GAME_BOARD_CONFIG })
     const [settings, setSettings] = useState({ ...SETTINGS })
+    const [loading, setLoading] = useState(false)
     const board = getBoard()
 
     useEffect(() => {
@@ -32,10 +33,10 @@ function App() {
     }, [chess.turn])
 
     return (
-        <div className="js_chess">
+        <div className={`js_chess ${loading ? 'loading' : ''}`}>
             <div className="column column_left">
                 <div className="overlay">
-                    <div className="board" disabled={chess.isFinished}>
+                    <div className={`board ${chess.isFinished ? 'finished' : ''}`} disabled={chess.isFinished || loading}>
                         {board}
                     </div>
                 </div>
@@ -44,6 +45,7 @@ function App() {
                 <div className="menu">
                     <RightColumn chess={chess}
                                  settings={settings}
+                                 loading={loading}
                                  onNewGameClick={() => handleNewGameClick() }
                                  onComputerLevelClick={handleChangeComputerLevelClick}
                                  onConfirmationToggleClick={() => handleChangeConfirmationToggleClick() }
@@ -112,10 +114,12 @@ function App() {
     }
 
     async function sendRequest(url) {
+        await setLoading(true)
         const res = await fetch(
             `${process.env.REACT_APP_JS_CHESS_API}${url}`,
             { method: 'POST', body: JSON.stringify(chess), headers: { 'Content-Type': 'application/json' }}
         )
+        await setLoading(false)
         return res.json().then(res => {return res})
     }
 

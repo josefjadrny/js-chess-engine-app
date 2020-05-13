@@ -40,7 +40,7 @@
     max-width: 540px;
   }
 }
-.board[disabled] {
+.board.finished {
   opacity: .25;
   pointer-events: none;
 }
@@ -300,4 +300,7 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+.loading {
+  cursor: wait;
 }

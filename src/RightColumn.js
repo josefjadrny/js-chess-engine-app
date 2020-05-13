@@ -9,12 +9,13 @@ function RightColumn(props) {
         onConfirmationClick,
         chess,
         settings,
+        loading,
     } = props
 
     return (
         <div>
             <div id="new_game">
-                <button disabled={!chess.history.length} onClick={onNewGameClick}><b>NEW GAME</b></button>
+                <button disabled={!chess.history.length || loading} onClick={onNewGameClick}><b>NEW GAME</b></button>
             </div>
             <div id="history">
                 <b>HISTORY</b><br/>
