@@ -37,7 +37,7 @@
 }
 @media all and (max-height: 768px) {
   .board {
-    max-width: 540px;
+    max-width: 520px;
   }
 }
 .board.finished {
