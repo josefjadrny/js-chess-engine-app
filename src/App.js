@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import Field from './Field';
+import PersistState from './PersistState';
 import RightColumn from './RightColumn.js'
-import {NEW_GAME_BOARD_CONFIG, ROWS, COLUMNS, COLORS, SETTINGS} from './const/board'
+import {NEW_GAME_BOARD_CONFIG, ROWS, COLUMNS, COLORS, SETTINGS, PERSIST_STATE_NAMESPACE} from './const/board'
 import ReactGA from 'react-ga';
+import { get } from 'local-storage'
 import './App.css'
 const API_URIS = {
     MOVES: 'moves',
@@ -15,8 +17,10 @@ ReactGA.initialize(process.env.REACT_APP_ANALYTICS_CODE)
 ReactGA.pageview(window.location.pathname + window.location.search)
 
 function App() {
-    const [chess, setChess] = useState({ ...NEW_GAME_BOARD_CONFIG })
-    const [settings, setSettings] = useState({ ...SETTINGS })
+    const savedSettings = get(`${PERSIST_STATE_NAMESPACE}_settings`)
+    const savedChess = get(`${PERSIST_STATE_NAMESPACE}_chess`)
+    const [chess, setChess] = useState(typeof savedChess === 'object' ? savedChess : { ...NEW_GAME_BOARD_CONFIG })
+    const [settings, setSettings] = useState(typeof savedSettings === 'object' ? savedSettings : { ...SETTINGS })
     const [loading, setLoading] = useState(false)
     const board = getBoard()
 
@@ -52,6 +56,10 @@ function App() {
                                  onConfirmationClick={() => handleChangeConfirmationClick() }
                     />
                 </div>
+                <PersistState
+                    settings={settings}
+                    chess={chess}
+                />
             </div>
         </div>
     )

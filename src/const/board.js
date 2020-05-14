@@ -13,6 +13,7 @@ export const SETTINGS = {
     computerLevel: COMPUTER_LEVELS.Advanced,
     confirmation: false,
 }
+export const PERSIST_STATE_NAMESPACE = 'js_chess_app'
 export const NEW_GAME_BOARD_CONFIG = {
     turn: COLORS.WHITE,
     pieces: {
