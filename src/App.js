@@ -34,7 +34,7 @@ function App() {
     }, [])
 
     useEffect(() => {
-        if (chess.turn === COLORS.BLACK) {
+        if (chess.turn === COLORS.BLACK && !chess.isFinished) {
             aiMove()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -127,12 +127,21 @@ function App() {
 
     async function sendRequest(url) {
         await setLoading(true)
-        const res = await fetch(
+        try {
+            const res = await fetch(
             `${process.env.REACT_APP_JS_CHESS_API}${url}`,
             { method: 'POST', body: JSON.stringify(chess), headers: { 'Content-Type': 'application/json' }}
-        )
-        await setLoading(false)
-        return res.json().then(res => {return res})
+            )
+            if (res.status !== 200) {
+                throw new Error(`Server returns ${res.status}`)
+            }
+            await setLoading(false)
+            return res.json().then(res => {return res})
+        } catch (error) {
+            await setLoading(false)
+            chess.history.push({ from: 'Error', to: error.message })
+            return {}
+        }
     }
 
     async function handleChangeComputerLevelClick(level) {
