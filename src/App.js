@@ -19,8 +19,12 @@ ReactGA.pageview(window.location.pathname + window.location.search)
 function App() {
     const savedSettings = get(`${PERSIST_STATE_NAMESPACE}_settings`)
     const savedChess = get(`${PERSIST_STATE_NAMESPACE}_chess`)
-    const [chess, setChess] = useState(savedChess && typeof savedChess === 'object' ? savedChess : { ...NEW_GAME_BOARD_CONFIG })
-    const [settings, setSettings] = useState(savedSettings && typeof savedSettings === 'object' ? savedSettings : { ...SETTINGS })
+    const [chess, setChess] = useState(
+        savedChess && typeof savedChess === 'object' ? Object.assign({}, NEW_GAME_BOARD_CONFIG, savedChess) : { ...NEW_GAME_BOARD_CONFIG }
+        )
+    const [settings, setSettings] = useState(
+        savedSettings && typeof savedSettings === 'object' ? Object.assign({}, SETTINGS, savedSettings) : { ...SETTINGS }
+        )
     const [loading, setLoading] = useState(false)
     const board = getBoard()
 
