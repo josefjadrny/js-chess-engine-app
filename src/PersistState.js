@@ -15,7 +15,7 @@ function PersistState(props) {
     useEffect(() => {
         set(`${PERSIST_STATE_NAMESPACE}_chess`, chess)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chess.turn]);
+    }, [chess && chess.turn]);
 
     return (
         <div>
