@@ -54,5 +54,6 @@ export const NEW_GAME_BOARD_CONFIG = {
     move: {},
     history: [],
     isFinished: false,
-    chesMate: false
+    chesMate: false,
+    castling: {}
 }
