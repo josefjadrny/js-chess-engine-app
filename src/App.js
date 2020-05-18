@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Field from './Field';
 import PersistState from './PersistState';
 import RightColumn from './RightColumn.js'
-import {NEW_GAME_BOARD_CONFIG, ROWS, COLUMNS, COLORS, SETTINGS, PERSIST_STATE_NAMESPACE} from './const/board'
+import {NEW_GAME_BOARD_CONFIG, ROWS, COLUMNS, COLORS, SETTINGS, PERSIST_STATE_NAMESPACE, MOVE_SOUND} from './const/board'
 import ReactGA from 'react-ga';
 import { get } from 'local-storage'
 import './App.css'
@@ -12,6 +12,7 @@ const API_URIS = {
     MOVE: 'move',
     AI_MOVE: 'aimove'
 }
+const moveSound = new Audio(`data:audio/wav;base64,${MOVE_SOUND}`)
 
 ReactGA.initialize(process.env.REACT_APP_ANALYTICS_CODE)
 ReactGA.pageview(window.location.pathname + window.location.search)
@@ -57,6 +58,7 @@ function App() {
                                  onNewGameClick={() => handleNewGameClick() }
                                  onComputerLevelClick={handleChangeComputerLevelClick}
                                  onConfirmationToggleClick={() => handleChangeConfirmationToggleClick() }
+                                 onSoundToggleClick={() => handleChangeSoundToggleClick() }
                                  onConfirmationClick={() => handleChangeConfirmationClick() }
                     />
                 </div>
@@ -106,6 +108,9 @@ function App() {
         chess.move.from = from
         chess.move.to = to
         setChess(Object.assign({},  chess, { move: {} }, await sendRequest(API_URIS.MOVE) ))
+        if (settings.sound) {
+            moveSound.play()
+        }
     }
 
     async function aiMove() {
@@ -150,6 +155,10 @@ function App() {
 
     async function handleChangeConfirmationToggleClick() {
         await setSettings(Object.assign({}, settings,{confirmation: settings.confirmation ? false : true}))
+    }
+
+    async function handleChangeSoundToggleClick() {
+        await setSettings(Object.assign({}, settings,{sound: settings.sound ? false : true}))
     }
 
     async function handleChangeConfirmationClick() {

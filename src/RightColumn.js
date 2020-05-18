@@ -6,6 +6,7 @@ function RightColumn(props) {
         onNewGameClick,
         onComputerLevelClick,
         onConfirmationToggleClick,
+        onSoundToggleClick,
         onConfirmationClick,
         chess,
         settings,
@@ -53,6 +54,17 @@ function RightColumn(props) {
                     ''
                 }
 
+            </div>
+            <div id="sound">
+                <p><b>Sounds</b></p>
+                <label className="switch">
+                    <input
+                        type="checkbox"
+                        checked={settings.sound ? 'checked' : '' }
+                        onChange={onSoundToggleClick}
+                    />
+                    <span className="slider round"></span>
+                </label>
             </div>
             <div id="copyright">
                 <p>
