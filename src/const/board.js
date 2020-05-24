@@ -58,7 +58,7 @@ export const NEW_GAME_BOARD_CONFIG = {
     chesMate: false,
     castling: {},
     counters: {
-        fullMove: 0,
+        fullMove: 1,
         halfMove: 0,
     },
 }
