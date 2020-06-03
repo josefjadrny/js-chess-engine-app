@@ -107,7 +107,7 @@ function App() {
         chess.history.push({ from, to })
         chess.move.from = from
         chess.move.to = to
-        setChess(Object.assign({},  chess, { move: {} }, await sendRequest(API_URIS.MOVE) ))
+        setChess(Object.assign({},  chess, { move: {} }, await sendRequest(`${API_URIS.MOVE}?from=${from}&to=${to}`) ))
         if (settings.sound) {
             moveSound.play()
         }
