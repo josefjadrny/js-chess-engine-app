@@ -24,7 +24,7 @@ function Field(props) {
         (chess.history[chess.history.length - 1].from === location ||
         chess.history[chess.history.length - 1].to === location) ? 'lastMove' : ''
     const moveFromClass = chess.move.from === location ? 'moveFrom' : ''
-    const moveToClass = chess.move.from && chess.moves && chess.moves[chess.move.from].includes(location) ? 'moveTo' : ''
+    const moveToClass = chess.move.from && chess.moves && chess.moves[chess.move.from] && chess.moves[chess.move.from].includes(location) ? 'moveTo' : ''
 
     return (
         <div className={`field piece${piece} ${moveFromClass} ${moveToClass} ${historyClass}`} onClick={onClick}>
