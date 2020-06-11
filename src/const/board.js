@@ -55,8 +55,13 @@ export const NEW_GAME_BOARD_CONFIG = {
     move: {},
     history: [],
     isFinished: false,
-    chesMate: false,
-    castling: {},
+    checkMate: false,
+    castling: {
+        whiteShort: true,
+        blackShort: true,
+        whiteLong: true,
+        blackLong: true,
+    },
     fullMove: 1,
     halfMove: 0,
 }
