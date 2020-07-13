@@ -7,8 +7,8 @@ export const COLORS = {
 export const COMPUTER_LEVELS = {
     "Monkey": 0,
     "Beginner": 1,
-    "Advanced": 2,
-    "Professional": 3,
+    "Intermediate": 2,
+    "Advanced": 3,
 }
 export const SETTINGS = {
     computerLevel: COMPUTER_LEVELS.Advanced,
