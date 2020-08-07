@@ -8,7 +8,6 @@ export const COMPUTER_LEVELS = {
     "Monkey": 0,
     "Beginner": 1,
     "Intermediate": 2,
-    "Advanced": 3,
 }
 export const SETTINGS = {
     computerLevel: COMPUTER_LEVELS.Advanced,
