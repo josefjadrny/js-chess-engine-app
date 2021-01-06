@@ -10,7 +10,7 @@ export const COMPUTER_LEVELS = {
     "Intermediate": 2,
 }
 export const SETTINGS = {
-    computerLevel: COMPUTER_LEVELS.Advanced,
+    computerLevel: COMPUTER_LEVELS.Intermediate,
     confirmation: false,
     sound: true,
 }
