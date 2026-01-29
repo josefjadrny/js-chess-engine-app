@@ -35,11 +35,17 @@ function App() {
     }, [])
 
     useEffect(() => {
-        if (chess.turn === COLORS.BLACK && !chess.isFinished) {
+        // Only trigger AI when:
+        // - it's black's turn
+        // - the game isn't finished
+        // - we're not currently waiting on the server
+        // - legal moves for the current side are loaded (prevents loops during state transitions)
+        const hasMovesForTurn = chess.moves && Object.keys(chess.moves).length > 0
+        if (chess.turn === COLORS.BLACK && !chess.isFinished && !loading && hasMovesForTurn) {
             aiMove()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chess.turn])
+    }, [chess.turn, loading, chess.moves, chess.isFinished])
 
     return (
         <div className={`js_chess ${loading ? 'loading' : ''}`}>
@@ -124,6 +130,9 @@ function App() {
     }
 
     async function aiMove() {
+        // Guard: if we're already loading, don't start another AI request
+        if (loading) return
+
         // v2 expects AI levels 1-5
         const aiMove = await sendRequest(API_URIS.AI_MOVE, { level: settings.computerLevel })
         const from = Object.keys(aiMove)[0]
@@ -133,9 +142,9 @@ function App() {
         return getMoves()
     }
 
-    async function getMoves () {
-        const moves = await sendRequest(API_URIS.MOVES)
-        setChess(Object.assign({}, chess, { moves }))
+    async function getMoves (boardOverride) {
+        const moves = await sendRequest(API_URIS.MOVES, boardOverride ? { board: boardOverride } : undefined)
+        setChess(Object.assign({}, boardOverride || chess, { moves }))
     }
 
     async function handleNewGameClick() {
