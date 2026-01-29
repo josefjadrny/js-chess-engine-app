@@ -10,8 +10,10 @@ export const COMPUTER_LEVELS = {
     "Intermediate": 3,
     "Advanced": 4,
     "Expert": 5,
+    "Master": 6,
 }
 export const SETTINGS = {
+    // js-chess-engine v2 default AI level is 3
     computerLevel: COMPUTER_LEVELS.Intermediate,
     confirmation: false,
     sound: true,
