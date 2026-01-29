@@ -103,7 +103,7 @@ function App() {
         }
     }
 
-    async function performMove (from, to) {
+    async function performMove (from, to, { refreshMoves = true } = {}) {
         chess.history.push({ from, to })
         chess.move.from = from
         chess.move.to = to
@@ -111,9 +111,13 @@ function App() {
         const nextBoard = await sendRequest(API_URIS.MOVE, { from, to })
         // v2 server returns full board config after move
         const updatedChess = Object.assign({}, chess, { move: {} }, nextBoard)
-        // Important: refresh legal moves for the next player after the board changes
-        const nextMoves = await sendRequest(API_URIS.MOVES, { board: updatedChess })
-        setChess(Object.assign({}, updatedChess, { moves: nextMoves }))
+        if (refreshMoves) {
+            // Important: refresh legal moves for the next player after the board changes
+            const nextMoves = await sendRequest(API_URIS.MOVES, { board: updatedChess })
+            setChess(Object.assign({}, updatedChess, { moves: nextMoves }))
+        } else {
+            setChess(updatedChess)
+        }
         if (settings.sound) {
             moveSound.play()
         }
@@ -124,7 +128,9 @@ function App() {
         const aiMove = await sendRequest(API_URIS.AI_MOVE, { level: settings.computerLevel })
         const from = Object.keys(aiMove)[0]
         const to = Object.values(aiMove)[0]
-        return await performMove(from, to)
+        // Avoid an extra /moves call here; we'll refresh moves after the AI move is applied
+        await performMove(from, to, { refreshMoves: false })
+        return getMoves()
     }
 
     async function getMoves () {
