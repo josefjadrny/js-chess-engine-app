@@ -10,7 +10,7 @@ const API_URIS = {
     MOVES: 'moves',
     STATUS: 'status',
     MOVE: 'move',
-    AI_MOVE: 'aimove'
+    AI_MOVE: 'ai-move'
 }
 const moveSound = new Audio(`data:audio/wav;base64,${MOVE_SOUND}`)
 
@@ -107,14 +107,18 @@ function App() {
         chess.history.push({ from, to })
         chess.move.from = from
         chess.move.to = to
-        setChess(Object.assign({},  chess, { move: {} }, await sendRequest(`${API_URIS.MOVE}?from=${from}&to=${to}`) ))
+
+        const nextBoard = await sendRequest(API_URIS.MOVE, { from, to })
+        // v2 server returns full board config after move
+        setChess(Object.assign({}, chess, { move: {} }, nextBoard))
         if (settings.sound) {
             moveSound.play()
         }
     }
 
     async function aiMove() {
-        const aiMove = await sendRequest(`${API_URIS.AI_MOVE}?level=${settings.computerLevel}`)
+        // v2 expects AI levels 1-5
+        const aiMove = await sendRequest(API_URIS.AI_MOVE, { level: settings.computerLevel })
         const from = Object.keys(aiMove)[0]
         const to = Object.values(aiMove)[0]
         return await performMove(from, to)
@@ -130,23 +134,43 @@ function App() {
         await getMoves()
     }
 
-    async function sendRequest(url) {
+    async function sendRequest(endpoint, extraBody) {
         await setLoading(true)
         try {
-            const res = await fetch(
-            `${process.env.REACT_APP_JS_CHESS_API}${url}`,
-            { method: 'POST', body: JSON.stringify(chess), headers: { 'Content-Type': 'application/json' }}
+            const res = await fetch(`${process.env.REACT_APP_JS_CHESS_API}${endpoint}`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify(Object.assign({}, extraBody || {}, { board: chess })),
+                    headers: { 'Content-Type': 'application/json' }
+                }
             )
             if (res.status !== 200) {
                 throw new Error(`Server returns ${res.status}`)
             }
             await setLoading(false)
-            return res.json().then(res => {return res})
+            const json = await res.json()
+            return unwrapServerResponse(endpoint, json)
         } catch (error) {
             await setLoading(false)
             chess.history.push({ from: 'Error', to: error.message })
             return {}
         }
+    }
+
+    function unwrapServerResponse(endpoint, json) {
+        // Support both "raw" and "enveloped" server responses.
+        // Recommended v2 server shapes:
+        // - /moves    -> { moves: MovesMap }
+        // - /status   -> { status: BoardConfig }
+        // - /move     -> { board: BoardConfig }
+        // - /ai-move  -> { move: HistoryEntry }
+        if (!json || typeof json !== 'object') return json
+
+        if (endpoint === API_URIS.MOVES) return json.moves || json
+        if (endpoint === API_URIS.STATUS) return json.status || json
+        if (endpoint === API_URIS.MOVE) return json.board || json
+        if (endpoint === API_URIS.AI_MOVE) return json.move || json
+        return json
     }
 
     async function handleChangeComputerLevelClick(level) {

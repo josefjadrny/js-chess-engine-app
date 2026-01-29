@@ -5,10 +5,11 @@ export const COLORS = {
     WHITE: 'white'
 }
 export const COMPUTER_LEVELS = {
-    "Monkey": 0,
     "Beginner": 1,
-    "Intermediate": 2,
-    "Advanced": 3,
+    "Easy": 2,
+    "Intermediate": 3,
+    "Advanced": 4,
+    "Expert": 5,
 }
 export const SETTINGS = {
     computerLevel: COMPUTER_LEVELS.Intermediate,
