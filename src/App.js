@@ -110,7 +110,10 @@ function App() {
 
         const nextBoard = await sendRequest(API_URIS.MOVE, { from, to })
         // v2 server returns full board config after move
-        setChess(Object.assign({}, chess, { move: {} }, nextBoard))
+        const updatedChess = Object.assign({}, chess, { move: {} }, nextBoard)
+        // Important: refresh legal moves for the next player after the board changes
+        const nextMoves = await sendRequest(API_URIS.MOVES, { board: updatedChess })
+        setChess(Object.assign({}, updatedChess, { moves: nextMoves }))
         if (settings.sound) {
             moveSound.play()
         }
@@ -140,7 +143,14 @@ function App() {
             const res = await fetch(`${process.env.REACT_APP_JS_CHESS_API}${endpoint}`,
                 {
                     method: 'POST',
-                    body: JSON.stringify(Object.assign({}, extraBody || {}, { board: chess })),
+                    body: JSON.stringify(
+                        Object.assign(
+                            {},
+                            extraBody || {},
+                            // allow callers to supply an explicit board; otherwise use current state
+                            { board: (extraBody && Object.prototype.hasOwnProperty.call(extraBody, 'board')) ? extraBody.board : chess }
+                        )
+                    ),
                     headers: { 'Content-Type': 'application/json' }
                 }
             )
