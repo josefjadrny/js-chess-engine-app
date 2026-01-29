@@ -35,17 +35,11 @@ function App() {
     }, [])
 
     useEffect(() => {
-        // Only trigger AI when:
-        // - it's black's turn
-        // - the game isn't finished
-        // - we're not currently waiting on the server
-        // - legal moves for the current side are loaded (prevents loops during state transitions)
-        const hasMovesForTurn = chess.moves && Object.keys(chess.moves).length > 0
-        if (chess.turn === COLORS.BLACK && !chess.isFinished && !loading && hasMovesForTurn) {
+        if (chess.turn === COLORS.BLACK && !chess.isFinished) {
             aiMove()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chess.turn, loading, chess.moves, chess.isFinished])
+    }, [chess.turn])
 
     return (
         <div className={`js_chess ${loading ? 'loading' : ''}`}>
@@ -109,7 +103,7 @@ function App() {
         }
     }
 
-    async function performMove (from, to, { refreshMoves = true } = {}) {
+    async function performMove (from, to) {
         chess.history.push({ from, to })
         chess.move.from = from
         chess.move.to = to
@@ -117,34 +111,25 @@ function App() {
         const nextBoard = await sendRequest(API_URIS.MOVE, { from, to })
         // v2 server returns full board config after move
         const updatedChess = Object.assign({}, chess, { move: {} }, nextBoard)
-        if (refreshMoves) {
-            // Important: refresh legal moves for the next player after the board changes
-            const nextMoves = await sendRequest(API_URIS.MOVES, { board: updatedChess })
-            setChess(Object.assign({}, updatedChess, { moves: nextMoves }))
-        } else {
-            setChess(updatedChess)
-        }
+        // Refresh legal moves for the next player after the board changes
+        const nextMoves = await sendRequest(API_URIS.MOVES, { board: updatedChess })
+        setChess(Object.assign({}, updatedChess, { moves: nextMoves }))
         if (settings.sound) {
             moveSound.play()
         }
     }
 
     async function aiMove() {
-        // Guard: if we're already loading, don't start another AI request
-        if (loading) return
-
         // v2 expects AI levels 1-5
         const aiMove = await sendRequest(API_URIS.AI_MOVE, { level: settings.computerLevel })
         const from = Object.keys(aiMove)[0]
         const to = Object.values(aiMove)[0]
-        // Avoid an extra /moves call here; we'll refresh moves after the AI move is applied
-        await performMove(from, to, { refreshMoves: false })
-        return getMoves()
+        return await performMove(from, to)
     }
 
-    async function getMoves (boardOverride) {
-        const moves = await sendRequest(API_URIS.MOVES, boardOverride ? { board: boardOverride } : undefined)
-        setChess(Object.assign({}, boardOverride || chess, { moves }))
+    async function getMoves () {
+        const moves = await sendRequest(API_URIS.MOVES)
+        setChess(Object.assign({}, chess, { moves }))
     }
 
     async function handleNewGameClick() {
