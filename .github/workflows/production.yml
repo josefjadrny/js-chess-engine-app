@@ -18,15 +18,15 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Yarn Install
+    - name: Install Dependencies
       run: |
-        yarn install
+        npm ci
     - name: Production Build
       env:
         REACT_APP_JS_CHESS_API: ${{ secrets.REACT_APP_JS_CHESS_API }}
         REACT_APP_ANALYTICS_CODE: ${{ secrets.REACT_APP_ANALYTICS_CODE }}
       run: |
-        yarn build
+        npm run build
     - name: Deploy to S3
       uses: jakejarvis/s3-sync-action@master
       with:

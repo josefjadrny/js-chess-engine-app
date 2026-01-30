@@ -111,9 +111,13 @@ function App() {
         const nextBoard = await sendRequest(API_URIS.MOVE, { from, to })
         // v2 server returns full board config after move
         const updatedChess = Object.assign({}, chess, { move: {} }, nextBoard)
-        // Refresh legal moves for the next player after the board changes
-        const nextMoves = await sendRequest(API_URIS.MOVES, { board: updatedChess })
-        setChess(Object.assign({}, updatedChess, { moves: nextMoves }))
+        // Only fetch moves if next turn is human player (WHITE), not AI (BLACK)
+        if (updatedChess.turn !== COLORS.BLACK) {
+            const nextMoves = await sendRequest(API_URIS.MOVES, { board: updatedChess })
+            setChess(Object.assign({}, updatedChess, { moves: nextMoves }))
+        } else {
+            setChess(updatedChess)
+        }
         if (settings.sound) {
             moveSound.play()
         }
