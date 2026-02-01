@@ -114,7 +114,15 @@ function App() {
         // Only fetch moves if next turn is human player (WHITE), not AI (BLACK)
         if (updatedChess.turn !== COLORS.BLACK) {
             const nextMoves = await sendRequest(API_URIS.MOVES, { board: updatedChess })
-            setChess(Object.assign({}, updatedChess, { moves: nextMoves }))
+            if (isMovesEmpty(nextMoves)) {
+                setChess(Object.assign({}, updatedChess, {
+                    moves: {},
+                    isFinished: true,
+                    checkMate: true,
+                }))
+            } else {
+                setChess(Object.assign({}, updatedChess, { moves: nextMoves }))
+            }
         } else {
             setChess(updatedChess)
         }
@@ -133,12 +141,27 @@ function App() {
 
     async function getMoves () {
         const moves = await sendRequest(API_URIS.MOVES)
-        setChess(Object.assign({}, chess, { moves }))
+        if (isMovesEmpty(moves)) {
+            setChess(Object.assign({}, chess, {
+                moves: {},
+                isFinished: true,
+                checkMate: true,
+            }))
+        } else {
+            setChess(Object.assign({}, chess, { moves }))
+        }
     }
 
     async function handleNewGameClick() {
-        await setChess(Object.assign(chess, {pieces: {}}, NEW_GAME_BOARD_CONFIG))
+        await setChess(Object.assign(chess, { pieces: {} }, NEW_GAME_BOARD_CONFIG, {
+            isFinished: false,
+            checkMate: false,
+        }))
         await getMoves()
+    }
+
+    function isMovesEmpty(moves) {
+        return !moves || (typeof moves === 'object' && Object.keys(moves).length === 0)
     }
 
     async function sendRequest(endpoint, extraBody) {
