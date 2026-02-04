@@ -127,7 +127,8 @@ function App() {
             setChess(updatedChess)
         }
         if (settings.sound) {
-            moveSound.play()
+            moveSound.currentTime = 0
+            moveSound.play().catch(err => console.log('Sound play failed:', err))
         }
     }
 
