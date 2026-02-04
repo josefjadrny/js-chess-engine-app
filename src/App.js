@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Field from './Field';
 import PersistState from './PersistState';
 import RightColumn from './RightColumn.js'
-import {NEW_GAME_BOARD_CONFIG, ROWS, COLUMNS, COLORS, SETTINGS, PERSIST_STATE_NAMESPACE, MOVE_SOUND} from './const/board'
+import {NEW_GAME_BOARD_CONFIG, ROWS, COLUMNS, COLORS, SETTINGS, PERSIST_STATE_NAMESPACE, MOVE_SOUND, TAKE_SOUND} from './const/board'
 import ReactGA from 'react-ga';
 import { get } from 'local-storage'
 import './App.css'
@@ -13,6 +13,7 @@ const API_URIS = {
     AI_MOVE: 'ai-move'
 }
 const moveSound = new Audio(`data:audio/wav;base64,${MOVE_SOUND}`)
+const takeSound = new Audio(`data:audio/wav;base64,${TAKE_SOUND}`)
 
 ReactGA.initialize(process.env.REACT_APP_ANALYTICS_CODE)
 ReactGA.pageview(window.location.pathname + window.location.search)
@@ -104,6 +105,10 @@ function App() {
     }
 
     async function performMove (from, to) {
+        const piecesBefore = chess.pieces || {}
+        const piecesBeforeCount = Object.keys(piecesBefore).length
+        const destinationHadPiece = Object.prototype.hasOwnProperty.call(piecesBefore, to)
+
         chess.history.push({ from, to })
         chess.move.from = from
         chess.move.to = to
@@ -111,6 +116,11 @@ function App() {
         const nextBoard = await sendRequest(API_URIS.MOVE, { from, to })
         // v2 server returns full board config after move
         const updatedChess = Object.assign({}, chess, { move: {} }, nextBoard)
+
+        const piecesAfter = updatedChess.pieces || {}
+        const piecesAfterCount = Object.keys(piecesAfter).length
+        const isCapture = destinationHadPiece || (piecesAfterCount < piecesBeforeCount)
+
         // Only fetch moves if next turn is human player (WHITE), not AI (BLACK)
         if (updatedChess.turn !== COLORS.BLACK) {
             const nextMoves = await sendRequest(API_URIS.MOVES, { board: updatedChess })
@@ -127,8 +137,9 @@ function App() {
             setChess(updatedChess)
         }
         if (settings.sound) {
-            moveSound.currentTime = 0
-            moveSound.play().catch(err => console.log('Sound play failed:', err))
+            const sound = isCapture ? takeSound : moveSound
+            sound.currentTime = 0
+            sound.play().catch(err => console.log('Sound play failed:', err))
         }
     }
 
