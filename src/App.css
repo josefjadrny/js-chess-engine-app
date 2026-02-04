@@ -3,6 +3,28 @@
   flex-direction: row;
   width: 100%;
 }
+
+:root {
+  --board-light: #c6baa6;
+  --board-dark: #6a5745;
+  --board-border: #3b2f27;
+
+  --hl-hover: #caa56a;
+  --hl-from: #caa56a;
+  --hl-to: #3aa6a1;
+  --hl-last: #b35a5a;
+
+  --panel-bg: #1b1714;
+  --panel-surface: #26211d;
+  --panel-border: #3b2f27;
+  --panel-text: #d7d0c6;
+  --panel-muted: #a79f95;
+
+  --accent: #caa56a;
+  --accent-strong: #b89257;
+  --accent-green: #3aa6a1;
+  --danger: #b35a5a;
+}
 @media all and (max-width: 959px) {
     .js_chess {
     flex-direction: column;
@@ -30,7 +52,7 @@
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: auto;
-  border: 10px solid #999999;
+  border: 10px solid var(--board-border);
   width: min(calc(100vw - 450px), 90vh);
   height: min(calc(100vw - 450px), 90vh);
   margin: 0 auto;
@@ -79,24 +101,24 @@
   background-repeat:no-repeat;
 }
 .board .field:hover {
-  -webkit-box-shadow:inset 0px 0px 0px 3px #3366CC;
-  -moz-box-shadow:inset 0px 0px 0px 3px #3366CC;
-  box-shadow:inset 0px 0px 0px 3px #3366CC;
+  -webkit-box-shadow: inset 0px 0px 0px 3px var(--hl-hover);
+  -moz-box-shadow: inset 0px 0px 0px 3px var(--hl-hover);
+  box-shadow: inset 0px 0px 0px 3px var(--hl-hover);
 }
 .board .lastMove {
-  -webkit-box-shadow:inset 0px 0px 0px 2px #FF0033;
-  -moz-box-shadow:inset 0px 0px 0px 2px #FF0033;
-  box-shadow:inset 0px 0px 0px 2px #FF0033;
+  -webkit-box-shadow: inset 0px 0px 0px 2px var(--hl-last);
+  -moz-box-shadow: inset 0px 0px 0px 2px var(--hl-last);
+  box-shadow: inset 0px 0px 0px 2px var(--hl-last);
 }
 .board .moveFrom {
-  -webkit-box-shadow:inset 0px 0px 0px 3px #3366CC;
-  -moz-box-shadow:inset 0px 0px 0px 3px #3366CC;
-  box-shadow:inset 0px 0px 0px 3px #3366CC;
+  -webkit-box-shadow: inset 0px 0px 0px 3px var(--hl-from);
+  -moz-box-shadow: inset 0px 0px 0px 3px var(--hl-from);
+  box-shadow: inset 0px 0px 0px 3px var(--hl-from);
 }
 .board .moveTo {
-  -webkit-box-shadow:inset 0px 0px 0px 2px #33CC33;
-  -moz-box-shadow:inset 0px 0px 0px 2px #33CC33;
-  box-shadow:inset 0px 0px 0px 2px #33CC33;
+  -webkit-box-shadow: inset 0px 0px 0px 3px var(--hl-to);
+  -moz-box-shadow: inset 0px 0px 0px 3px var(--hl-to);
+  box-shadow: inset 0px 0px 0px 3px var(--hl-to);
 }
 .board .pieceP {
   background-image: url(./img/pawn_white.png);
@@ -143,27 +165,27 @@
 body {
   padding: 0;
   margin: 0;
-  background-color: #212121;
+  background-color: #141210;
   font-size: 20px;
-  color: #cccccc;
+  color: var(--panel-text);
 }
 a:visited{
-  color: #4CAF50;;
+  color: var(--accent-green);
 }
 a:link{
-  color: #4CAF50;;
+  color: var(--accent-green);
 }
 
 body .field {
-  background-color: #cccccc;
+  background-color: var(--board-light);
 }
 body .field:nth-of-type(-2n+8), body .field:nth-of-type(8) ~ *:nth-of-type(-2n+15), body .field:nth-of-type(16) ~ *:nth-of-type(-2n+24), body .field:nth-of-type(24) ~ *:nth-of-type(-2n+31), body .field:nth-of-type(32) ~ *:nth-of-type(-2n+40), body .field:nth-of-type(40) ~ *:nth-of-type(-2n+47), body .field:nth-of-type(48) ~ *:nth-of-type(-2n+56), body .field:nth-of-type(56) ~ *:nth-of-type(-2n+63) {
-  background-color: #666666;
+  background-color: var(--board-dark);
 }
 button {
-  background-color: #4CAF50;
+  background-color: var(--accent);
   border: none;
-  color: white;
+  color: #1a1410;
   padding: 15px 32px;
   text-align: center;
   text-decoration: none;
@@ -173,24 +195,35 @@ button {
   border-radius: 10px;
 }
 button:hover {
-  background-color: #006400;
+  background-color: var(--accent-strong);
 }
 button:disabled {
   opacity: .5;
   pointer-events: none;
 }
 .menu #history {
-  background-color: #f0f7fb;
+  background-color: var(--panel-surface);
   line-height: 18px;
   overflow: hidden;
   margin: 10px 0px 10px 0px;
   text-align: center;
   padding: 5px;
-  color: #666666;
+  color: var(--panel-text);
+  border: 1px solid var(--panel-border);
   border-radius: 10px;
   overflow-y: scroll;
   height: 105px;
   font-size: 18px;
+}
+.menu #history b {
+  color: var(--panel-muted);
+  letter-spacing: 0.5px;
+}
+.menu p {
+  color: var(--panel-text);
+}
+.menu strong, .menu b {
+  color: var(--panel-text);
 }
 .menu #copyright {
   margin-top: 50px;
@@ -231,18 +264,19 @@ button:disabled {
   left: 0;
   height: 25px;
   width: 25px;
-  background-color: #eee;
+  background-color: var(--panel-surface);
+  border: 1px solid var(--panel-border);
   border-radius: 50%;
 }
 
 /* On mouse-over, add a grey background color */
 .level_wrapper:hover input ~ .checkmark {
-  background-color: #ccc;
+  background-color: #2f2924;
 }
 
 /* When the radio button is checked, add a blue background */
 .level_wrapper input:checked ~ .checkmark {
-  background-color: #4CAF50;
+  background-color: var(--accent-green);
 }
 
 /* Create the indicator (the dot/circle - hidden when not checked) */
@@ -264,7 +298,7 @@ button:disabled {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: white;
+  background: #f2eadc;
 }
 /* The switch - the box around the slider */
 .switch {
@@ -289,7 +323,7 @@ button:disabled {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: #3a332d;
   -webkit-transition: .4s;
   transition: .4s;
 }
@@ -301,17 +335,17 @@ button:disabled {
   width: 22px;
   left: 4px;
   bottom: 4px;
-  background-color: white;
+  background-color: #f2eadc;
   -webkit-transition: .4s;
   transition: .4s;
 }
 
 input:checked + .slider {
-  background-color: #4CAF50;
+  background-color: var(--accent-green);
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #4CAF50;
+  box-shadow: 0 0 0 2px rgba(202, 165, 106, 0.35);
 }
 
 input:checked + .slider:before {
