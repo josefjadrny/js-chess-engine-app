@@ -105,6 +105,11 @@ function App() {
     }
 
     async function performMove (from, to) {
+        if (!from || !to) {
+            appendHistory({ from: 'Error', to: 'Invalid move (missing from/to)' })
+            return
+        }
+
         const piecesBefore = chess.pieces || {}
         const piecesBeforeCount = Object.keys(piecesBefore).length
         const destinationHadPiece = Object.prototype.hasOwnProperty.call(piecesBefore, to)
@@ -114,6 +119,9 @@ function App() {
         chess.move.to = to
 
         const nextBoard = await sendRequest(API_URIS.MOVE, { from, to })
+        if (!nextBoard) {
+            return
+        }
         // v2 server returns full board config after move
         const updatedChess = Object.assign({}, chess, { move: {} }, nextBoard)
 
@@ -121,21 +129,24 @@ function App() {
         const piecesAfterCount = Object.keys(piecesAfter).length
         const isCapture = destinationHadPiece || (piecesAfterCount < piecesBeforeCount)
 
-        // Only fetch moves if next turn is human player (WHITE), not AI (BLACK)
-        if (updatedChess.turn !== COLORS.BLACK) {
-            const nextMoves = await sendRequest(API_URIS.MOVES, { board: updatedChess })
-            if (isMovesEmpty(nextMoves)) {
-                setChess(Object.assign({}, updatedChess, {
-                    moves: {},
-                    isFinished: true,
-                    checkMate: true,
-                }))
-            } else {
-                setChess(Object.assign({}, updatedChess, { moves: nextMoves }))
-            }
-        } else {
+        // Always refresh legal moves for the side to move.
+        // This prevents calling AI when the position is already finished.
+        const nextMoves = await sendRequest(API_URIS.MOVES, { board: updatedChess })
+        if (!nextMoves) {
             setChess(updatedChess)
+            return
         }
+        if (isMovesEmpty(nextMoves)) {
+            setChess(Object.assign({}, updatedChess, {
+                moves: {},
+                isFinished: true,
+                checkMate: !!updatedChess.check,
+                staleMate: !updatedChess.check,
+            }))
+        } else {
+            setChess(Object.assign({}, updatedChess, { moves: nextMoves }))
+        }
+
         if (settings.sound) {
             const sound = isCapture ? takeSound : moveSound
             sound.currentTime = 0
@@ -146,13 +157,30 @@ function App() {
     async function aiMove() {
         // v2 expects AI levels 1-5
         const aiMove = await sendRequest(API_URIS.AI_MOVE, { level: settings.computerLevel })
-        const from = Object.keys(aiMove)[0]
-        const to = Object.values(aiMove)[0]
-        return await performMove(from, to)
+
+        // Some servers may respond with a string like "game finished".
+        if (typeof aiMove === 'string') {
+            return await handleAiFailure(`AI move failed (${aiMove})`)
+        }
+
+        if (!aiMove || typeof aiMove !== 'object' || Object.keys(aiMove).length === 0) {
+            return await handleAiFailure('AI move failed (empty response)')
+        }
+
+        // Accept either { from: 'E2', to: 'E4' } or { 'E2': 'E4' }
+        const parsed = parseAiMove(aiMove)
+        if (!parsed) {
+            return await handleAiFailure('AI move failed (invalid response shape)')
+        }
+
+        return await performMove(parsed.from, parsed.to)
     }
 
     async function getMoves () {
         const moves = await sendRequest(API_URIS.MOVES)
+        if (!moves) {
+            return
+        }
         if (isMovesEmpty(moves)) {
             setChess(Object.assign({}, chess, {
                 moves: {},
@@ -174,6 +202,47 @@ function App() {
 
     function isMovesEmpty(moves) {
         return !moves || (typeof moves === 'object' && Object.keys(moves).length === 0)
+    }
+
+    function appendHistory(record) {
+        setChess(prev => Object.assign({}, prev, {
+            history: [...(prev.history || []), record]
+        }))
+    }
+
+    function setFinished(checkMate) {
+        setChess(prev => Object.assign({}, prev, {
+            moves: {},
+            move: {},
+            isFinished: true,
+            checkMate: !!checkMate,
+        }))
+    }
+
+    async function handleAiFailure(message) {
+        appendHistory({ from: 'Error', to: message })
+
+        // Try to determine whether the side to move has any legal moves.
+        // If there are no moves, treat it as game end (checkmate/stalemate).
+        const moves = await sendRequest(API_URIS.MOVES)
+        if (moves && isMovesEmpty(moves)) {
+            setFinished(!!chess.check)
+        }
+    }
+
+    function parseAiMove(aiMove) {
+        if (!aiMove || typeof aiMove !== 'object') return null
+
+        if (aiMove.from && aiMove.to) {
+            return { from: aiMove.from, to: aiMove.to }
+        }
+
+        const keys = Object.keys(aiMove)
+        if (keys.length !== 1) return null
+        const from = keys[0]
+        const to = aiMove[from]
+        if (!from || !to) return null
+        return { from, to }
     }
 
     async function sendRequest(endpoint, extraBody) {
@@ -201,8 +270,8 @@ function App() {
             return unwrapServerResponse(endpoint, json)
         } catch (error) {
             await setLoading(false)
-            chess.history.push({ from: 'Error', to: error.message })
-            return {}
+            appendHistory({ from: 'Error', to: error.message })
+            return null
         }
     }
 
