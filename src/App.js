@@ -176,28 +176,39 @@ function App() {
         return await performMove(parsed.from, parsed.to)
     }
 
-    async function getMoves () {
-        const moves = await sendRequest(API_URIS.MOVES)
+    async function getMoves (boardOverride) {
+        const moves = await sendRequest(API_URIS.MOVES, boardOverride ? { board: boardOverride } : undefined)
         if (!moves) {
             return
         }
+
+        const baseBoard = boardOverride || chess
         if (isMovesEmpty(moves)) {
-            setChess(Object.assign({}, chess, {
+            setChess(Object.assign({}, baseBoard, {
                 moves: {},
                 isFinished: true,
-                checkMate: true,
+                checkMate: !!baseBoard.check,
+                staleMate: !baseBoard.check,
             }))
         } else {
-            setChess(Object.assign({}, chess, { moves }))
+            setChess(Object.assign({}, baseBoard, { moves }))
         }
     }
 
     async function handleNewGameClick() {
-        await setChess(Object.assign(chess, { pieces: {} }, NEW_GAME_BOARD_CONFIG, {
+        const resetBoard = Object.assign({}, NEW_GAME_BOARD_CONFIG, {
+            history: [],
+            moves: {},
+            move: {},
             isFinished: false,
             checkMate: false,
-        }))
-        await getMoves()
+            staleMate: false,
+            check: false,
+            enPassant: null,
+        })
+
+        setChess(resetBoard)
+        await getMoves(resetBoard)
     }
 
     function isMovesEmpty(moves) {

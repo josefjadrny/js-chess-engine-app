@@ -9,10 +9,10 @@
   --board-dark: #6a5745;
   --board-border: #3b2f27;
 
-  --hl-hover: #caa56a;
-  --hl-from: #caa56a;
+  --hl-hover: var(--hl-from);
+  --hl-from: var(--hl-last);
   --hl-to: #3aa6a1;
-  --hl-last: #b35a5a;
+  --hl-last: #d77a2c;
 
   --panel-bg: #1b1714;
   --panel-surface: #26211d;
@@ -106,14 +106,14 @@
   box-shadow: inset 0px 0px 0px 3px var(--hl-hover);
 }
 .board .lastMove {
-  -webkit-box-shadow: inset 0px 0px 0px 2px var(--hl-last);
-  -moz-box-shadow: inset 0px 0px 0px 2px var(--hl-last);
-  box-shadow: inset 0px 0px 0px 2px var(--hl-last);
+  -webkit-box-shadow: inset 0px 0px 0px 3px var(--hl-last), inset 0px 0px 0px 1px rgba(0,0,0,0.35) !important;
+  -moz-box-shadow: inset 0px 0px 0px 3px var(--hl-last), inset 0px 0px 0px 1px rgba(0,0,0,0.35) !important;
+  box-shadow: inset 0px 0px 0px 3px var(--hl-last), inset 0px 0px 0px 1px rgba(0,0,0,0.35) !important;
 }
 .board .moveFrom {
-  -webkit-box-shadow: inset 0px 0px 0px 3px var(--hl-from);
-  -moz-box-shadow: inset 0px 0px 0px 3px var(--hl-from);
-  box-shadow: inset 0px 0px 0px 3px var(--hl-from);
+  -webkit-box-shadow: inset 0px 0px 0px 3px var(--hl-from), inset 0px 0px 0px 1px rgba(0,0,0,0.35);
+  -moz-box-shadow: inset 0px 0px 0px 3px var(--hl-from), inset 0px 0px 0px 1px rgba(0,0,0,0.35);
+  box-shadow: inset 0px 0px 0px 3px var(--hl-from), inset 0px 0px 0px 1px rgba(0,0,0,0.35);
 }
 .board .moveTo {
   -webkit-box-shadow: inset 0px 0px 0px 3px var(--hl-to);
