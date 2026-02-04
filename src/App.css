@@ -11,7 +11,7 @@
 
   --hl-hover: var(--hl-from);
   --hl-from: var(--hl-last);
-  --hl-to: #3aa6a1;
+  --hl-to: #00b3b8;
   --hl-last: #d77a2c;
 
   --panel-bg: #1b1714;
@@ -22,7 +22,7 @@
 
   --accent: #caa56a;
   --accent-strong: #b89257;
-  --accent-green: #3aa6a1;
+  --accent-green: #00b3b8;
   --danger: #b35a5a;
 }
 @media all and (max-width: 959px) {
@@ -116,9 +116,16 @@
   box-shadow: inset 0px 0px 0px 3px var(--hl-from), inset 0px 0px 0px 1px rgba(0,0,0,0.35);
 }
 .board .moveTo {
-  -webkit-box-shadow: inset 0px 0px 0px 3px var(--hl-to);
-  -moz-box-shadow: inset 0px 0px 0px 3px var(--hl-to);
-  box-shadow: inset 0px 0px 0px 3px var(--hl-to);
+  -webkit-box-shadow: inset 0px 0px 0px 3px var(--hl-to), inset 0px 0px 0px 1px rgba(0,0,0,0.35);
+  -moz-box-shadow: inset 0px 0px 0px 3px var(--hl-to), inset 0px 0px 0px 1px rgba(0,0,0,0.35);
+  box-shadow: inset 0px 0px 0px 3px var(--hl-to), inset 0px 0px 0px 1px rgba(0,0,0,0.35);
+}
+
+/* If the last move square is also a legal target, prefer showing the target highlight. */
+.board .lastMove.moveTo {
+  -webkit-box-shadow: inset 0px 0px 0px 3px var(--hl-to), inset 0px 0px 0px 1px var(--hl-last), inset 0px 0px 0px 1px rgba(0,0,0,0.35) !important;
+  -moz-box-shadow: inset 0px 0px 0px 3px var(--hl-to), inset 0px 0px 0px 1px var(--hl-last), inset 0px 0px 0px 1px rgba(0,0,0,0.35) !important;
+  box-shadow: inset 0px 0px 0px 3px var(--hl-to), inset 0px 0px 0px 1px var(--hl-last), inset 0px 0px 0px 1px rgba(0,0,0,0.35) !important;
 }
 .board .pieceP {
   background-image: url(./img/pawn_white.png);
