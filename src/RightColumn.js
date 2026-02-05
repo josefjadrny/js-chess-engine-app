@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {COMPUTER_LEVELS} from './const/board'
 
 function RightColumn(props) {
@@ -12,6 +12,32 @@ function RightColumn(props) {
         settings,
         loading,
     } = props
+
+    const [engineVersion, setEngineVersion] = useState(null)
+
+    useEffect(() => {
+        let cancelled = false
+
+        async function loadVersion() {
+            const base = process.env.REACT_APP_JS_CHESS_API
+            if (!base) return
+
+            try {
+                const res = await fetch(`${base}version`)
+                if (!res.ok) return
+                const json = await res.json().catch(() => null)
+                const version = json && (json.version || (json.jsChessEngine && json.jsChessEngine.version))
+                if (!cancelled && version) setEngineVersion(version)
+            } catch (e) {
+                // ignore
+            }
+        }
+
+        loadVersion()
+        return () => {
+            cancelled = true
+        }
+    }, [])
 
     return (
         <div>
@@ -69,7 +95,8 @@ function RightColumn(props) {
             <div id="copyright">
                 <p>
                     This web site is using an open-source
-                    &nbsp;<a href="https://www.npmjs.com/package/js-chess-engine" target="_blank"  rel="noopener noreferrer">js-chess-engine</a>.
+                    &nbsp;<a href="https://www.npmjs.com/package/js-chess-engine" target="_blank"  rel="noopener noreferrer">js-chess-engine</a>
+                    {engineVersion ? ` v${engineVersion}` : ''}.
                 </p>
             </div>
         </div>
